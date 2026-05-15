@@ -1,8 +1,8 @@
 """
-2-2. Ollama LLaVA로 텍스트 추출
-결과: results/ollama_llava/페이지명.txt
+2-2. Ollama Qwen2.5-VL로 텍스트 추출
+결과: results/qwen_vl/페이지명.txt
 
-사전 준비: ollama pull llava
+사전 준비: ollama pull qwen2.5vl:7b
 """
 
 import traceback
@@ -10,21 +10,18 @@ from pathlib import Path
 import ollama
 
 BOOK_DIR = Path("book")
-OUT_DIR = Path("results/ollama_llava")
-MODEL = "llava"
-IMAGE_EXTENSIONS = ["*.jpg", "*.jpeg", "*.png", "*.JPG", "*.JPEG", "*.PNG"]
+OUT_DIR = Path("results/qwen_vl")
+MODEL = "qwen2.5vl:7b"
+IMAGE_EXTENSIONS = {".jpg", ".jpeg", ".png"}
 
 PROMPT = (
-    "이 이미지는 책 페이지 사진입니다. "
-    "이미지에 있는 모든 텍스트를 빠짐없이 정확하게 추출해주세요. "
-    "원문 그대로 출력하고, 설명이나 주석은 추가하지 마세요."
+    "Please transcribe all the text visible in this image exactly as it appears, "
+    "preserving line breaks. Output only the transcribed text with no commentary."
 )
 
 
 def get_sorted_images():
-    images = []
-    for ext in IMAGE_EXTENSIONS:
-        images.extend(BOOK_DIR.glob(ext))
+    images = [p for p in BOOK_DIR.iterdir() if p.suffix.lower() in IMAGE_EXTENSIONS]
     images.sort(key=lambda p: [int(c) if c.isdigit() else c for c in p.stem])
     return images
 
