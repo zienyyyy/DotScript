@@ -9,13 +9,11 @@ from paddleocr import PaddleOCR
 
 BOOK_DIR = Path("book")
 OUT_DIR = Path("results/paddleocr")
-IMAGE_EXTENSIONS = ["*.jpg", "*.jpeg", "*.png", "*.JPG", "*.JPEG", "*.PNG"]
+IMAGE_EXTENSIONS = {".jpg", ".jpeg", ".png"}
 
 
 def get_sorted_images():
-    images = []
-    for ext in IMAGE_EXTENSIONS:
-        images.extend(BOOK_DIR.glob(ext))
+    images = [p for p in BOOK_DIR.iterdir() if p.suffix.lower() in IMAGE_EXTENSIONS]
     images.sort(key=lambda p: [int(c) if c.isdigit() else c for c in p.stem])
     return images
 
@@ -34,7 +32,7 @@ if __name__ == "__main__":
     for img_path in images:
         print(f"처리 중: {img_path.name}")
         try:
-            result = ocr.ocr(str(img_path), cls=True)
+            result = ocr.ocr(str(img_path), cls=True)  # noqa: deprecated
             lines = []
             if result and result[0]:
                 for line in result[0]:
