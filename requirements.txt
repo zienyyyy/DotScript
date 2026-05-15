@@ -1,0 +1,6 @@
+paddlepaddle
+paddleocr
+ollama
+openai
+python-dotenv
+Pillow
